@@ -187,7 +187,7 @@ public class Remocon extends RosActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                              WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.rocon_remocon);
-		concertNameView = (TextView) findViewById(R.id.concert_name_view);
+		concertNameView = findViewById(R.id.concert_name_view);
         // Prepare the app manager; we do here instead of on init to keep using the same instance when switching roles
         interactionsManager = new InteractionsManager(
                 new InteractionsManager.FailureHandler() {
@@ -310,7 +310,7 @@ public class Remocon extends RosActivity {
                                 dialog.show();
                             }
 
-                        };
+                        }
                     });
                 }
                 else {
@@ -352,7 +352,7 @@ public class Remocon extends RosActivity {
                     NodeConfiguration.newPublic(local_network_address.getHostAddress(), getMasterUri());
             interactionsManager.init(roconDescription.getInteractionsNamespace());
             interactionsManager.getAppsForRole(roconDescription.getMasterId(), roconDescription.getCurrentRole());
-            interactionsManager.setRemoconName(statusPublisher.REMOCON_FULL_NAME);
+            interactionsManager.setRemoconName(StatusPublisher.REMOCON_FULL_NAME);
             progressDialog.show("Getting apps...",
                     "Retrieving interactions for the '" + roconDescription.getCurrentRole() + "' role");
             //execution of publisher
@@ -365,7 +365,7 @@ public class Remocon extends RosActivity {
 
             if (! pairSubscriber.isInitialized()) {
                 // If we come back from an app, it should be already initialized, so call execute again would crash
-                nodeMainExecutorService.execute(pairSubscriber, nodeConfiguration.setNodeName(pairSubscriber.NODE_NAME));
+                nodeMainExecutorService.execute(pairSubscriber, nodeConfiguration.setNodeName(PairSubscriber.NODE_NAME));
             }
         } catch (IOException e) {
             // Socket problem
@@ -590,7 +590,7 @@ public class Remocon extends RosActivity {
 		Log.d("Remocon", "updating app list gridview");
         selectedInteraction = null;
         concertNameView.setText(master_name + " - " + role);
-		GridView gridview = (GridView) findViewById(R.id.gridview);
+		GridView gridview = findViewById(R.id.gridview);
 		AppAdapter appAdapter = new AppAdapter(Remocon.this, apps);
 		gridview.setAdapter(appAdapter);
 		registerForContextMenu(gridview);

@@ -91,11 +91,11 @@ public class AppAdapter extends BaseAdapter {
     	Bitmap iconBitmap = BitmapFactory.decodeByteArray( interaction.getIcon().getData().array(), buffer.arrayOffset(), buffer.readableBytes());
 
       if( iconBitmap != null ) {
-        ImageView iv = (ImageView) view.findViewById(R.id.icon);
+        ImageView iv = view.findViewById(R.id.icon);
         iv.setImageBitmap(iconBitmap);
       }
     }
-    TextView tv = (TextView) view.findViewById(R.id.name);
+    TextView tv = view.findViewById(R.id.name);
     tv.setText(interaction.getDisplayName());
 
     return view;

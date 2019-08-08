@@ -81,7 +81,7 @@ public class InteractionsManager extends AbstractNodeMain {
 
     public enum Action {
         NONE, GET_INTERACTIONS_FOR_ROLE, GET_INTERACTION_INFO, REQUEST_INTERACTION_USE
-    };
+    }
 
     private String role;
     private String interactionsNamespace;

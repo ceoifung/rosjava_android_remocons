@@ -89,7 +89,7 @@ public class AppLauncher {
         URL,
         WEB_URL,
         WEB_APP,
-        NOTHING;
+        NOTHING
     }
     /**
      * Launch a client app for the given concert app.
@@ -218,7 +218,7 @@ public class AppLauncher {
         Result result  = Result.OTHER_ERROR;
         String launchablePkgName = "";
         PackageManager manager = parent.getPackageManager();
-        List<ApplicationInfo> applicationInfo = manager.getInstalledApplications(manager.GET_META_DATA);
+        List<ApplicationInfo> applicationInfo = manager.getInstalledApplications(PackageManager.GET_META_DATA);
         for (int i = 0; i < applicationInfo.size(); i++){
             ApplicationInfo appInfo = applicationInfo.get(i);
             if (app.getName().contains(appInfo.processName)){
@@ -450,7 +450,7 @@ public class AppLauncher {
                 Yaml yaml = new Yaml();
                 Map<String, String> params = (Map<String, String>) yaml.load(app.getParameters());
                 for( String key : params.keySet() ) {
-                    parameters += "\"" + key + "\":\"" + String.valueOf(params.get(key))+"" + "\",";
+                    parameters += "\"" + key + "\":\"" + params.get(key) +"" + "\",";
                 }
                 parameters = parameters.substring(0, parameters.length() - 1);
             }

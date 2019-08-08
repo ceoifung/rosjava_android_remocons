@@ -60,16 +60,16 @@ public class RoconNfcWriter extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editSsid       = (EditText) findViewById(R.id.ssid);
-        editPassword   = (EditText) findViewById(R.id.pasword);
-        editMasterHost = (EditText) findViewById(R.id.master_host);
-        editMasterPort = (EditText) findViewById(R.id.master_port);
-        editAppHash    = (EditText) findViewById(R.id.nfc_app_id);
-        editExtraData  = (EditText) findViewById(R.id.extra_data);
-        editAppRecord  = (EditText) findViewById(R.id.app_record);
+        editSsid       = findViewById(R.id.ssid);
+        editPassword   = findViewById(R.id.pasword);
+        editMasterHost = findViewById(R.id.master_host);
+        editMasterPort = findViewById(R.id.master_port);
+        editAppHash    = findViewById(R.id.nfc_app_id);
+        editExtraData  = findViewById(R.id.extra_data);
+        editAppRecord  = findViewById(R.id.app_record);
 
-        buttonWrite = (Button) findViewById(R.id.nfc_write);
-        messageText = (TextView) findViewById(R.id.message);
+        buttonWrite = findViewById(R.id.nfc_write);
+        messageText = findViewById(R.id.message);
 
         ssid       = getPreferences(MODE_PRIVATE).getString(PREFS_KEY_SSID, editSsid.getText().toString());
         password   = getPreferences(MODE_PRIVATE).getString(PREFS_KEY_PSWD, editPassword.getText().toString());

@@ -150,7 +150,7 @@ public class MasterChooser extends Activity {
 
 	private void updateListView() {
 		setContentView(R.layout.master_chooser);
-		ListView listview = (ListView) findViewById(R.id.master_list);
+		ListView listview = findViewById(R.id.master_list);
 		listview.setAdapter(new MasterAdapter(this, masters));
 		registerForContextMenu(listview);
 
@@ -295,7 +295,7 @@ public class MasterChooser extends Activity {
                     requestCode, resultCode, intent);
             if (scanResult != null && scanResult.getContents() != null) {
                 Yaml yaml = new Yaml();
-                String scanned_data = scanResult.getContents().toString();
+                String scanned_data = scanResult.getContents();
                 data = (Map<String, Object>) yaml.load(scanned_data);
             }
         }
@@ -334,31 +334,31 @@ public class MasterChooser extends Activity {
 			dialog.setContentView(R.layout.add_uri_dialog);
 			dialog.setTitle("Add a Master");
 			dialog.setOnKeyListener(new DialogKeyListener());
-			EditText uriField = (EditText) dialog.findViewById(R.id.uri_editor);
+			EditText uriField = dialog.findViewById(R.id.uri_editor);
 			uriField.setText("http://localhost:11311/",
 					TextView.BufferType.EDITABLE);
-			button = (Button) dialog.findViewById(R.id.enter_button);
+			button = dialog.findViewById(R.id.enter_button);
 			button.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					enterMasterInfo(dialog);
 					removeDialog(ADD_URI_DIALOG_ID);
 				}
 			});
-            button = (Button) dialog.findViewById(R.id.qr_code_button);
+            button = dialog.findViewById(R.id.qr_code_button);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     scanQRCodeClicked(v);
                 }
             });
-            button = (Button) dialog.findViewById(R.id.nfc_tag_button);
+            button = dialog.findViewById(R.id.nfc_tag_button);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     scanNFCTagClicked(v);
                 }
             });
-			button = (Button) dialog.findViewById(R.id.search_master_button);
+			button = dialog.findViewById(R.id.search_master_button);
 			button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -366,7 +366,7 @@ public class MasterChooser extends Activity {
 				}
 			});
 
-			button = (Button) dialog.findViewById(R.id.cancel_button);
+			button = dialog.findViewById(R.id.cancel_button);
 			button.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -503,12 +503,12 @@ public class MasterChooser extends Activity {
 	}
 
 	public void enterMasterInfo(Dialog dialog) {
-		EditText uriField = (EditText) dialog.findViewById(R.id.uri_editor);
+		EditText uriField = dialog.findViewById(R.id.uri_editor);
 		String newMasterUri = uriField.getText().toString();
-		EditText wifiNameField = (EditText) dialog
+		EditText wifiNameField = dialog
 				.findViewById(R.id.wifi_name_editor);
 		String newWifiName = wifiNameField.getText().toString();
-		EditText wifiPasswordField = (EditText) dialog
+		EditText wifiPasswordField = dialog
 				.findViewById(R.id.wifi_password_editor);
 		String newWifiPassword = wifiPasswordField.getText().toString();
 		if (newMasterUri != null && newMasterUri.length() > 0) {

@@ -21,7 +21,7 @@ public class AlertDialogActivity extends Activity implements View.OnClickListene
         mainContext = getIntent().getExtras().getString("MainContext");
 
         TextView text_view;
-        text_view = (TextView)this.findViewById(R.id.main_context);
+        text_view = this.findViewById(R.id.main_context);
         text_view.setText(mainContext);
     }
 

@@ -48,88 +48,86 @@ import java.util.LinkedHashMap;
 /**
  * @author murase@jsk.imi.i.u-tokyo.ac.jp (Kazuto Murase)
  * @author jorge@yujinrobot.com (Jorge Santos Simon)
- * 
+ * <p>
  * Modified to work in standalone, paired (robot) and concert modes.
  * Also now handles parameters and remappings.
  */
 public abstract class RosAppActivity extends RosActivity {
 
+    protected MasterNameResolver masterNameResolver;
+    protected MasterDescription masterDescription;
+    // By now params and remaps are only available for concert apps; that is, appMode must be CONCERT
+    protected AppParameters params = new AppParameters();
+    protected AppRemappings remaps = new AppRemappings();
     /*
       By default we assume the ros app activity is launched independently. The following attribute is
       used to identify when it has instead been launched by a controlling application (e.g. remocons)
       in paired, one-to-one, or concert mode.
      */
     private InteractionMode appMode = InteractionMode.STANDALONE;
-	private String masterAppName = null;
-	private String defaultMasterAppName = null;
-	private String defaultMasterName = "";
+    private String masterAppName = null;
+    private String defaultMasterAppName = null;
+    private String defaultMasterName = "";
     private String androidApplicationName; // descriptive helper only
     private String remoconActivity = null;  // The remocon activity to start when finishing this app
-                                            // e.g. com.github.rosjava.android_remocons.robot_remocon.RobotRemocon
+    // e.g. com.github.rosjava.android_remocons.robot_remocon.RobotRemocon
     private Serializable remoconExtraData = null; // Extra data for remocon (something inheriting from MasterDescription)
+    private int dashboardResourceId = 0;
+    private int mainWindowId = 0;
+    private Dashboard dashboard = null;
+    private NodeConfiguration nodeConfiguration;
+    private NodeMainExecutor nodeMainExecutor;
 
-	private int dashboardResourceId = 0;
-	private int mainWindowId = 0;
-	private Dashboard dashboard = null;
-	private NodeConfiguration nodeConfiguration;
-	private NodeMainExecutor nodeMainExecutor;
-	protected MasterNameResolver masterNameResolver;
-    protected MasterDescription masterDescription;
-
-    // By now params and remaps are only available for concert apps; that is, appMode must be CONCERT
-    protected AppParameters params = new AppParameters();
-    protected AppRemappings remaps = new AppRemappings();
+    protected RosAppActivity(String notificationTicker, String notificationTitle) {
+        super(notificationTicker, notificationTitle);
+        this.androidApplicationName = notificationTitle;
+    }
 
     protected void setDashboardResource(int resource) {
-		dashboardResourceId = resource;
-	}
+        dashboardResourceId = resource;
+    }
 
-	protected void setMainWindowResource(int resource) {
-		mainWindowId = resource;
-	}
+    protected void setMainWindowResource(int resource) {
+        mainWindowId = resource;
+    }
 
-	protected void setDefaultMasterName(String name) {
-		defaultMasterName = name;
-	}
+    protected void setDefaultMasterName(String name) {
+        defaultMasterName = name;
+    }
 
-	protected void setDefaultAppName(String name) {
+    protected void setDefaultAppName(String name) {
         defaultMasterAppName = name;
-	}
+    }
 
-	protected void setCustomDashboardPath(String path) {
-		dashboard.setCustomDashboardPath(path);
-	}
+    protected void setCustomDashboardPath(String path) {
+        dashboard.setCustomDashboardPath(path);
+    }
 
-	protected RosAppActivity(String notificationTicker, String notificationTitle) {
-		super(notificationTicker, notificationTitle);
-        this.androidApplicationName = notificationTitle;
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        if (mainWindowId == 0) {
+            Log.e("RosApp",
+                    "You must set the dashboard resource ID in your RosAppActivity");
+            return;
+        }
+        if (dashboardResourceId == 0) {
+            Log.e("RosApp",
+                    "You must set the dashboard resource ID in your RosAppActivity");
+            return;
+        }
 
-		if (mainWindowId == 0) {
-			Log.e("RosApp",
-					"You must set the dashboard resource ID in your RosAppActivity");
-			return;
-		}
-		if (dashboardResourceId == 0) {
-			Log.e("RosApp",
-					"You must set the dashboard resource ID in your RosAppActivity");
-			return;
-		}
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(mainWindowId);
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(mainWindowId);
+        masterNameResolver = new MasterNameResolver();
 
-		masterNameResolver = new MasterNameResolver();
-
-		if (defaultMasterName != null) {
-			masterNameResolver.setMasterName(defaultMasterName);
-		}
+        if (defaultMasterName != null) {
+            masterNameResolver.setMasterName(defaultMasterName);
+        }
 
 // FAKE concert remocon invocation
 //        MasterId mid = new MasterId("http://192.168.10.129:11311", "http://192.168.10.129:11311", "DesertStorm3", "WEP2", "yujin0610");
@@ -168,9 +166,7 @@ public abstract class RosAppActivity extends RosActivity {
             Log.e("RosApp", "We are running as standalone :(");
             masterAppName = defaultMasterAppName;
             appMode = InteractionMode.STANDALONE;
-		}
-        else
-        {
+        } else {
             // Managed app; take from the intent all the fancy stuff remocon put there for us
 
             // Extract parameters and remappings from a YAML-formatted strings; translate into hash maps
@@ -184,8 +180,8 @@ public abstract class RosAppActivity extends RosActivity {
             Log.d("RosApp", "Remappings: " + remapsStr);
 
             try {
-                if ((paramsStr != null) && (! paramsStr.isEmpty())) {
-                    LinkedHashMap<String, Object> paramsList = (LinkedHashMap<String, Object>)yaml.load(paramsStr);
+                if ((paramsStr != null) && (!paramsStr.isEmpty())) {
+                    LinkedHashMap<String, Object> paramsList = (LinkedHashMap<String, Object>) yaml.load(paramsStr);
                     if (paramsList != null) {
                         params.putAll(paramsList);
                         Log.d("RosApp", "Parameters: " + paramsStr);
@@ -197,8 +193,8 @@ public abstract class RosAppActivity extends RosActivity {
             }
 
             try {
-                if ((remapsStr != null) && (! remapsStr.isEmpty())) {
-                    LinkedHashMap<String, String> remapsList = (LinkedHashMap<String, String>)yaml.load(remapsStr);
+                if ((remapsStr != null) && (!remapsStr.isEmpty())) {
+                    LinkedHashMap<String, String> remapsList = (LinkedHashMap<String, String>) yaml.load(remapsStr);
                     if (remapsList != null) {
                         remaps.putAll(remapsList);
                         Log.d("RosApp", "Remappings: " + remapsStr);
@@ -224,8 +220,7 @@ public abstract class RosAppActivity extends RosActivity {
                     Log.e("RosApp", "Master description expected on intent on " + appMode + " mode");
                     throw new RosRuntimeException("Master description expected on intent on " + appMode + " mode");
                 }
-            }
-            else {
+            } else {
                 // TODO how should I handle these things? try to go back to remocon? Show a message?
                 Log.e("RosApp", "Master description missing on intent on " + appMode + " mode");
                 throw new RosRuntimeException("Master description missing on intent on " + appMode + " mode");
@@ -233,24 +228,23 @@ public abstract class RosAppActivity extends RosActivity {
         }
 
         if (dashboard == null) {
-			dashboard = new Dashboard(this);
-			dashboard.setView((LinearLayout) findViewById(dashboardResourceId),
-					new LinearLayout.LayoutParams(
-							LinearLayout.LayoutParams.WRAP_CONTENT,
-							LinearLayout.LayoutParams.WRAP_CONTENT));
-		}
-	}
+            dashboard = new Dashboard(this);
+            dashboard.setView((LinearLayout) findViewById(dashboardResourceId),
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+    }
 
-	@Override
-	protected void init(NodeMainExecutor nodeMainExecutor) {
-		this.nodeMainExecutor = nodeMainExecutor;
-		nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory
+    @Override
+    protected void init(NodeMainExecutor nodeMainExecutor) {
+        this.nodeMainExecutor = nodeMainExecutor;
+        nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory
                 .newNonLoopback().getHostAddress(), getMasterUri());
 
         if (appMode == InteractionMode.STANDALONE) {
             dashboard.setRobotName(masterNameResolver.getMasterName());
-        }
-        else {
+        } else {
             masterNameResolver.setMaster(masterDescription);
             dashboard.setRobotName(masterDescription.getMasterName());  // TODO dashboard not working for concerted apps (Issue #32)
 
@@ -266,36 +260,36 @@ public abstract class RosAppActivity extends RosActivity {
         nodeMainExecutor.execute(dashboard, nodeConfiguration.setNodeName("dashboard"));
     }
 
-	protected NameResolver getMasterNameSpace() {
-		return masterNameResolver.getMasterNameSpace();
-	}
+    protected NameResolver getMasterNameSpace() {
+        return masterNameResolver.getMasterNameSpace();
+    }
 
-	protected void onAppTerminate() {
-		RosAppActivity.this.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				new AlertDialog.Builder(RosAppActivity.this)
-						.setTitle("App Termination")
-						.setMessage(
-								"The application has terminated on the server, so the client is exiting.")
-						.setCancelable(false)
-						.setNeutralButton("Exit",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int which) {
+    protected void onAppTerminate() {
+        RosAppActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(RosAppActivity.this)
+                        .setTitle("App Termination")
+                        .setMessage(
+                                "The application has terminated on the server, so the client is exiting.")
+                        .setCancelable(false)
+                        .setNeutralButton("Exit",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
                                         RosAppActivity.this.finish();
-									}
-								}).create().show();
-			}
-		});
-	}
+                                    }
+                                }).create().show();
+            }
+        });
+    }
 
-	@Override
-	public void startMasterChooser() {
-		if (appMode == InteractionMode.STANDALONE) {
-			super.startMasterChooser();
-		} else {
-			try {
+    @Override
+    public void startMasterChooser() {
+        if (appMode == InteractionMode.STANDALONE) {
+            super.startMasterChooser();
+        } else {
+            try {
                 nodeMainExecutorService.setMasterUri(new URI(masterDescription.getMasterUri()));
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -304,25 +298,25 @@ public abstract class RosAppActivity extends RosActivity {
                         return null;
                     }
                 }.execute();
-			} catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 // Remocon cannot be such a bastard to send as a wrong URI...
-				throw new RosRuntimeException(e);
-			}
-		}
-	}
+                throw new RosRuntimeException(e);
+            }
+        }
+    }
 
-	protected void releaseMasterNameResolver() {
-		nodeMainExecutor.shutdownNodeMain(masterNameResolver);
-	}
+    protected void releaseMasterNameResolver() {
+        nodeMainExecutor.shutdownNodeMain(masterNameResolver);
+    }
 
-	protected void releaseDashboardNode() {
-		nodeMainExecutor.shutdownNodeMain(dashboard);
-	}
+    protected void releaseDashboardNode() {
+        nodeMainExecutor.shutdownNodeMain(dashboard);
+    }
 
     /**
      * Whether this ros app activity should be responsible for
      * starting and stopping a paired master application.
-     *
+     * <p>
      * This responsibility is relinquished if the application
      * is controlled from a remocon, but required if the
      * android application is connecting and running directly.
@@ -333,26 +327,26 @@ public abstract class RosAppActivity extends RosActivity {
         return ((appMode == InteractionMode.STANDALONE) && (masterAppName != null));
     }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
-	@Override
-	public void onBackPressed() {
-		if (appMode != InteractionMode.STANDALONE) {  // i.e. it's a managed app
+    @Override
+    public void onBackPressed() {
+        if (appMode != InteractionMode.STANDALONE) {  // i.e. it's a managed app
             Log.i("RosApp", "app terminating and returning control to the remocon.");
             // Restart the remocon, supply it with the necessary information and stop this activity
-			Intent intent = new Intent();
-			intent.putExtra(Constants.ACTIVITY_SWITCHER_ID + "." + appMode + "_app_name", "AppChooser");
+            Intent intent = new Intent();
+            intent.putExtra(Constants.ACTIVITY_SWITCHER_ID + "." + appMode + "_app_name", "AppChooser");
             intent.putExtra(MasterDescription.UNIQUE_KEY, remoconExtraData);
             intent.setAction(remoconActivity);
-			intent.addCategory("android.intent.category.DEFAULT");
-			startActivity(intent);
-			finish();
-		} else {
+            intent.addCategory("android.intent.category.DEFAULT");
+            startActivity(intent);
+            finish();
+        } else {
             Log.i("RosApp", "backpress processing for RosAppActivity");
         }
-		super.onBackPressed();
-	}
+        super.onBackPressed();
+    }
 }

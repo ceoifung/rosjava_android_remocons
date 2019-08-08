@@ -74,8 +74,8 @@ public class DefaultDashboard extends LinearLayout implements Dashboard.Dashboar
     private void inflateSelf(Context context) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             inflater.inflate(R.layout.default_dashboard, this);
-            robotBattery = (BatteryLevelView) findViewById(R.id.robot_battery);
-            laptopBattery = (BatteryLevelView) findViewById(R.id.laptop_battery);
+            robotBattery = findViewById(R.id.robot_battery);
+            laptopBattery = findViewById(R.id.laptop_battery);
     }
     /**
      * Set the ROS Node to use to get status data and connect it up. Disconnects

@@ -16,21 +16,20 @@ import org.ros.node.NodeMainExecutor;
 
 import java.io.IOException;
 
-public class Listener extends RosAppActivity
-{
-    private Toast    lastToast;
+public class Listener extends RosAppActivity {
+    private Toast lastToast;
     private ConnectedNode node;
     private RosTextView<std_msgs.String> rosTextView;
 
-    public Listener()
-    {
+    public Listener() {
         super("Listener", "Listener");
     }
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         setDefaultMasterName(getString(R.string.default_robot));
         setDashboardResource(R.id.top_bar);
         setMainWindowResource(R.layout.main);
@@ -38,12 +37,11 @@ public class Listener extends RosAppActivity
     }
 
     @Override
-    protected void init(NodeMainExecutor nodeMainExecutor)
-    {
+    protected void init(NodeMainExecutor nodeMainExecutor) {
         String chatterTopic = remaps.get(getString(R.string.chatter_topic));
         super.init(nodeMainExecutor);
 
-        rosTextView = (RosTextView<std_msgs.String>) findViewById(R.id.text);
+        rosTextView = findViewById(R.id.text);
         rosTextView.setTopicName(getMasterNameSpace().resolve(chatterTopic).toString());
         rosTextView.setMessageType(std_msgs.String._TYPE);
         rosTextView.setMessageToStringCallable(new MessageCallable<String, std_msgs.String>() {
@@ -63,7 +61,7 @@ public class Listener extends RosAppActivity
             NodeConfiguration nodeConfiguration =
                     NodeConfiguration.newPublic(local_network_address.getHostAddress(), getMasterUri());
             nodeMainExecutor.execute(rosTextView, nodeConfiguration);
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             // Thread interruption
         } catch (IOException e) {
             // Socket problem
@@ -72,17 +70,15 @@ public class Listener extends RosAppActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        menu.add(0,0,0,R.string.stop_app);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, R.string.stop_app);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case 0:
                 finish();
                 break;

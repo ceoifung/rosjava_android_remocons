@@ -74,7 +74,7 @@ public class MasterItem implements ConcertChecker.ConcertDescriptionReceiver,
         this.description = roconDescription;
         this.description.setConnectionStatus(RoconDescription.CONNECTING);
         if (WifiChecker.wifiValid(this.description.getMasterId(),
-                (WifiManager) parentMca.getSystemService(parentMca.WIFI_SERVICE))) {
+                (WifiManager) parentMca.getSystemService(Context.WIFI_SERVICE))) {
             checker = new ConcertChecker(this, this);
             checker.beginChecking(this.description.getMasterId());
         } else {
@@ -135,12 +135,12 @@ public class MasterItem implements ConcertChecker.ConcertDescriptionReceiver,
         boolean isWifi = description.getConnectionStatus().equals(RoconDescription.WIFI);
         boolean isError = description.getConnectionStatus().equals(RoconDescription.ERROR);
         boolean isConnecting = description.getConnectionStatus().equals(RoconDescription.CONNECTING);
-        ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress_circle);
+        ProgressBar progress = view.findViewById(R.id.progress_circle);
         progress.setIndeterminate(true);
         progress.setVisibility(isConnecting ? View.VISIBLE : View.GONE);
-        ImageView errorImage = (ImageView) view.findViewById(R.id.error_icon);
+        ImageView errorImage = view.findViewById(R.id.error_icon);
         errorImage.setVisibility(isError ? View.VISIBLE : View.GONE);
-        ImageView iv = (ImageView) view.findViewById(R.id.concert_icon);
+        ImageView iv = view.findViewById(R.id.concert_icon);
         iv.setVisibility((isOk || isWifi || isUnavailable) ? View.VISIBLE : View.GONE);
         if (isWifi) {
             iv.setImageResource(R.drawable.wifi_question_mark);
@@ -166,11 +166,11 @@ public class MasterItem implements ConcertChecker.ConcertDescriptionReceiver,
             iv.setColorFilter(cf);
         }
         TextView tv;
-        tv = (TextView) view.findViewById(R.id.uri);
+        tv = view.findViewById(R.id.uri);
         tv.setText(description.getMasterId().toString());
-        tv = (TextView) view.findViewById(R.id.name);
+        tv = view.findViewById(R.id.name);
         tv.setText(description.getMasterFriendlyName());
-        tv = (TextView) view.findViewById(R.id.status);
+        tv = view.findViewById(R.id.status);
         tv.setText(errorReason);
     }
 }

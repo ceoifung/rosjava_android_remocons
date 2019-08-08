@@ -50,9 +50,9 @@ public class Dashboard implements NodeMain {
 		 * Set the ROS Node to use to get status data and connect it up.
 		 * Disconnects the previous node if there was one.
 		 */
-		public void onStart(ConnectedNode connectedNode);
+		void onStart(ConnectedNode connectedNode);
 
-		public void onShutdown(Node node);
+		void onShutdown(Node node);
 	}
 
     private static final String defaultDashboardPath = "com.github.rosjava.android_remocons.common_tools.dashboards.DefaultDashboard";
@@ -86,7 +86,7 @@ public class Dashboard implements NodeMain {
 	}
 
 	public void setCustomDashboardPath(String path) {
-		this.customDashboardPath = path;
+		customDashboardPath = path;
 	}
 
 	private static DashboardInterface createDashboard(Class dashClass,

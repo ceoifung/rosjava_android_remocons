@@ -122,9 +122,7 @@ public class WifiChecker {
                 if (wifiInfo.getSSID() != null && wifiInfo.getIpAddress() != 0
                         && wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
                     String master_SSID = "\"" + masterId.getWifi() + "\"";
-                    if (wifiInfo.getSSID().equals(master_SSID)) {
-                        return true;
-                    }
+                    return wifiInfo.getSSID().equals(master_SSID);
                 }
             }
         }

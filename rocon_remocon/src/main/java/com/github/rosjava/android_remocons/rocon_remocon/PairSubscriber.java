@@ -66,7 +66,7 @@ public class PairSubscriber implements NodeMain {
             @Override
             public void onNewMessage(Pair pair) {
                 if (paired_app_hash != 0){
-                    if(pair.getRemocon().equals(statusPublisher.REMOCON_FULL_NAME) && pair.getRapp().equals("")){
+                    if(pair.getRemocon().equals(StatusPublisher.REMOCON_FULL_NAME) && pair.getRapp().equals("")){
                         paired_app_hash = 0;
                         statusPublisher.update(false,paired_app_hash, null);
                     }

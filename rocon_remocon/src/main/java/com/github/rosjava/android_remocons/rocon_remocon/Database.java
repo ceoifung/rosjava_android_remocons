@@ -127,11 +127,7 @@ public class Database extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbh = new DatabaseHelper(this.getContext());
-        if (dbh == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return dbh != null;
     }
 
     @Override

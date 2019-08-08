@@ -154,12 +154,9 @@ public class NfcManager {
 
         Toast.makeText(mContext, action, Toast.LENGTH_SHORT).show();
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) ||
-            NfcAdapter.ACTION_TECH_DISCOVERED.equals(action) ||
-            NfcAdapter.ACTION_NDEF_DISCOVERED.equalsIgnoreCase(action))
-            return true;
-        else
-            return false;
+        return NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_TECH_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_NDEF_DISCOVERED.equalsIgnoreCase(action);
     }
 
     public String processTag() {

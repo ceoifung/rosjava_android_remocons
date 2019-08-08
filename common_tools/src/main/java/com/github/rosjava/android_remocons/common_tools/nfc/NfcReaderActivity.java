@@ -67,7 +67,7 @@ public class NfcReaderActivity extends Activity {
 
         try{
             setContentView(R.layout.nfc_tag_scan);
-            textView = (TextView) findViewById(R.id.text);
+            textView = findViewById(R.id.text);
             textView.setText("Scan a NFC tag");
             nfcManager = new NfcManager(this);
         }

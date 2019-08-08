@@ -42,7 +42,7 @@ public class Talker extends RosAppActivity
         String chatterTopic = remaps.get(getString(R.string.chatter_topic));
         super.init(nodeMainExecutor);
 
-        rosTextView = (RosTextView<std_msgs.String>) findViewById(R.id.text);
+        rosTextView = findViewById(R.id.text);
         rosTextView.setTopicName(getMasterNameSpace().resolve(chatterTopic).toString());
         rosTextView.setMessageType(std_msgs.String._TYPE);
         rosTextView.setMessageToStringCallable(new MessageCallable<String, std_msgs.String>() {

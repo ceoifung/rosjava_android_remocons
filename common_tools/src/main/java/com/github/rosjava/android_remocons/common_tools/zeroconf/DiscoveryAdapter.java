@@ -47,7 +47,7 @@ public class DiscoveryAdapter extends ArrayAdapter<DiscoveredService> {
 
             View view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                                                  .inflate(R.layout.zeroconf_master_item, this, false);
-            checkbox = (CheckedTextView) view.findViewById(R.id.service_detail);
+            checkbox = view.findViewById(R.id.service_detail);
             addView(view);
         }
 
@@ -96,8 +96,8 @@ public class DiscoveryAdapter extends ArrayAdapter<DiscoveredService> {
 
         DiscoveredService discovered_service = discoveredServices.get(position);
         if (discovered_service != null) {
-            TextView tt = (TextView) v.findViewById(R.id.service_name);
-            TextView bt = (TextView) v.findViewById(R.id.service_detail);
+            TextView tt = v.findViewById(R.id.service_name);
+            TextView bt = v.findViewById(R.id.service_detail);
             if (tt != null) {
                 tt.setText(discovered_service.name);
             }
@@ -119,7 +119,7 @@ public class DiscoveryAdapter extends ArrayAdapter<DiscoveredService> {
                 }
                 bt.setText(result);
             }
-            ImageView im = (ImageView) v.findViewById(R.id.icon);
+            ImageView im = v.findViewById(R.id.icon);
             if (im != null) {
                 if (discovered_service.type.indexOf("_" + targetServiceName + "._tcp") != -1 ||
                     discovered_service.type.indexOf("_" + targetServiceName + "._udp") != -1) {
