@@ -1,0 +1,27 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.github.rosjava.android_remocons.listener.kinetic"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 2
+        versionName "1.0.1"
+    }
+    lintOptions {
+        abortOnError = false
+    }
+}
+
+dependencies {
+    implementation 'org.ros.rosjava_core:rosjava:0.3.6'
+    implementation 'org.ros.android_core:android_core_components:0.4.0'
+    implementation 'org.ros.rosjava_bootstrap:message_generation:0.3.3'
+    implementation 'org.ros.rosjava_messages:std_msgs:0.5.11'
+    implementation project(':common_tools')
+}
+
+
+defaultTasks 'assembleRelease'

@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.2'
+    }
+}
+
+allprojects {
+    repositories {
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        maven {
+            url "http://repository.springsource.com/maven/bundles/release"
+        }
+        maven {
+            url "http://repository.springsource.com/maven/bundles/external"
+        }
+        maven {
+            url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
+        }
+        google()
+        jcenter()
+    }
+    //apply from: "https://github.com/rosjava/android_core/raw/kinetic/buildscript.gradle"
+}
